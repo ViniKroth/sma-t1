@@ -20,6 +20,13 @@ public class App {
 
         queue = new SimpleQueue('G', 'G', 1, 3, 1, 2, 3, 6);
 
+        try {
+            System.out.println("testando agendarSaída: "+ queue.scheduleLeave(2.0, 0.3276));
+            System.out.println("testando agendarChegada: "+ queue.scheduleArrival(2.0, 0.8851));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
