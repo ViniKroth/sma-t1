@@ -6,26 +6,39 @@ import java.util.List;
 // PT-BR: Escalonador
 public class Scheduler {
 
-    private List<Integer> events = new ArrayList<>();
-    private List<Double> timeArray = new ArrayList<>();
-    private List<Double> drawArray = new ArrayList<>();
+	private List<Integer> events = new ArrayList<>();
+	private List<Double> timeArray = new ArrayList<>();
+	private List<Double> drawArray = new ArrayList<>();
 
-    public Scheduler() {}
+	public Scheduler() {
+	}
 
-    public void insert(int event, double time, double draw) {
-        if((event != 0 && event != 1) || time < 0 || (draw != -1 && draw < 0))
-            throw new IllegalArgumentException("Event, time and draw must be valid");
+	public void insert(int event, double time, double draw) {
+		if ((event != 0 && event != 1) || time < 0 || (draw != -1 && draw < 0))
+			throw new IllegalArgumentException("Event, time and draw must be valid");
 
-        events.add(event);
-        timeArray.add(time);
-        drawArray.add(draw);
-    }
+		events.add(event);
+		timeArray.add(time);
+		drawArray.add(draw);
 
-    public List<Integer> getEvents() { return events; }
+	}
 
-    public List<Double> getTime() {	return timeArray; }
+	public List<Integer> getEvents() {
+		return events;
+	}
 
-    public List<Double> getDraw() {	return drawArray; }
+	public List<Double> getTime() {
+		return timeArray;
+	}
+
+	public List<Double> getDraw() {
+		return drawArray;
+	}
+
+	public void printScheduler() {
+		for (int i = 0; i < events.size(); i++) {
+			System.out.println("Evento: " + events.get(i) + " Tempo: " + timeArray.get(i)+ " Sorteio: " + drawArray.get(i));
+		}
+	}
 
 }
-
