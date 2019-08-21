@@ -22,10 +22,11 @@ public class Simulator {
 //                + "  1: " + queueStates[1] + "  2: " + queueStates[2] + "  3: " + queueStates[3]);
 
         // Estado inicial: Chegada = 2,00
-        this.queue.arrive(new Event(EventType.ARRIVAL, 2.0));
+        Event event = new Event(EventType.ARRIVAL, 2.0);
+        scheduler.events.add(event);
 
-        for (int i = 0; i < 100; i++) {
-            Event event = scheduler.nextEvent();
+        for (int i = 0; i < 100000; i++) {
+             event = scheduler.nextEvent();
             if (event.getEventType().equals(EventType.ARRIVAL)) {
                 queue.arrive(event);
             } else
@@ -33,6 +34,7 @@ public class Simulator {
         }
 
 		scheduler.checkList();
+        queue.printPercentages();
 //        System.out.println("\nESCALONADOR:");
 //        System.out.println("  Eventos(0 - Saida  1 - Chegada)  ");
        // this.scheduler.printScheduler();

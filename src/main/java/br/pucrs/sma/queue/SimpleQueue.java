@@ -8,6 +8,7 @@ public class SimpleQueue {
 
     private int size = 0;
     private double globalTime = 0;
+    private int losses = 0;
 
     // Kendall Notation
     private char A = 'G'; // distribution
@@ -49,10 +50,12 @@ public class SimpleQueue {
         // Cont Tempo
         if (size < K) {
             size++;
-            if (size <= 1) {
+            if (size <= 2) {
                 scheduler.schedule(EventType.LEAVE, globalTime);
             }
         }
+        else
+            losses++;
         scheduler.schedule(EventType.ARRIVAL, globalTime);
     }
 
@@ -61,7 +64,7 @@ public class SimpleQueue {
             throw new Exception("Queue is empty");
         updateTime(event.getExecutionTime());
         size--;
-        if (size >= 1) {
+        if (size >= 2) {
             scheduler.schedule(EventType.LEAVE, globalTime);
         }
     }
@@ -71,8 +74,15 @@ public class SimpleQueue {
     }
 
     private void updateTime(double eventTime) {
-        queueStates[size] = eventTime - globalTime;
+        queueStates[size]  += eventTime - globalTime;
         globalTime = eventTime;
+    }
+
+    public void printPercentages () {
+        for(int i =0; i<queueStates.length; i++)
+        System.out.println(" Estado: " + i + " = " + queueStates[i]/globalTime);
+
+        System.out.println("Perdas: " + losses);
     }
 
 }

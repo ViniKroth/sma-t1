@@ -9,7 +9,7 @@ import java.util.*;
 // PT-BR: Escalonador
 public class Scheduler {
 
-    private List<Event> events;
+    public List<Event> events;
     private List<Double> timeArray;
 
     private int fromArrival;

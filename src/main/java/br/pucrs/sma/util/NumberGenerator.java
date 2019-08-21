@@ -10,6 +10,9 @@ public class NumberGenerator {
 
     private static NumberGenerator instance;
     private static int id = 0;
+    private static double[] vet = {0.3, 0.7, 0.2, 0.1, 0.4, 0.3, 0.5, 0.6, 0.7, 0.9, 0.6};
+
+    private static int index =0;
 
     private NumberGenerator() {}
 
@@ -34,6 +37,8 @@ public class NumberGenerator {
         X0 = Xi;
         // Sets the value to be between 0 and 1 and it should contain only 4 decimal numbers
         double value = (double) Xi / M;
+//        value = vet[index];
+//        index++;
         double scale = Math.pow(10, 4);
         return Math.round(convertToRange(from, to, value) * scale) / scale;
     }
