@@ -14,15 +14,14 @@ public class App {
 
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 100; i++) {
 			System.out.println(NumberGenerator.getInstance().nextRandom(4, 9));
 		}
 
-		queue = new SimpleQueue('G', 'G', 1, 3, 1, 2, 3, 6, scheduler, 2);
+		queue = new SimpleQueue( 1, 3, 1, 2, 3, 6, scheduler, 2);
 
 		Simulator simulator = new Simulator(3, queue, scheduler);
 		simulator.run();
-
 	}
 
 }

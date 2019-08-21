@@ -1,44 +1,75 @@
 package br.pucrs.sma.queue;
 
-import java.util.ArrayList;
-import java.util.List;
+import br.pucrs.sma.model.Event;
+import br.pucrs.sma.util.NumberGenerator;
+import type.EventType;
+
+import java.util.*;
 
 // PT-BR: Escalonador
 public class Scheduler {
 
-	private List<Integer> events = new ArrayList<>();
-	private List<Double> timeArray = new ArrayList<>();
-	private List<Double> drawArray = new ArrayList<>();
+    private List<Event> events;
+    private List<Double> timeArray;
 
-	public Scheduler() {
-	}
+    private int fromArrival;
+    private int toArrival;
+    private int fromLeave;
+    private int toLeave;
+    private List<Event> checkedEvents;
 
-	public void insert(int event, double time, double draw) {
-		if ((event != 0 && event != 1) || time < 0 || (draw != -1 && draw < 0))
-			throw new IllegalArgumentException("Event, time and draw must be valid");
+    public Scheduler(int fromArrival, int toArrival, int fromLeave, int toLeave) {
+        this.events = new ArrayList<>();
+        this.timeArray = new ArrayList<>();
+        this.fromArrival = fromArrival;
+        this.toArrival = toArrival;
+        this.fromLeave = fromLeave;
+        this.toLeave = toLeave;
+        checkedEvents = new ArrayList<>();
+    }
 
-		events.add(event);
-		timeArray.add(time);
-		drawArray.add(draw);
+    public List<Event> getEvents() {
+        return events;
+    }
 
-	}
+    public List<Double> getTime() {
+        return timeArray;
+    }
 
-	public List<Integer> getEvents() {
-		return events;
-	}
 
-	public List<Double> getTime() {
-		return timeArray;
-	}
+    public void printScheduler() {
+        for (int i = 0; i < events.size(); i++) {
+            System.out.println("Evento: " + events.get(i) + " Tempo: " + timeArray.get(i));
+        }
+    }
 
-	public List<Double> getDraw() {
-		return drawArray;
-	}
+    public void schedule(EventType eventType, double globalTime) {
+        Event event;
+        if (eventType.equals(EventType.ARRIVAL)) {
+            event = new Event(eventType, globalTime + NumberGenerator.getInstance()
+                    .nextRandom(fromArrival, toArrival));
+        } else {
+            event = new Event(eventType, globalTime + NumberGenerator.getInstance()
+                    .nextRandom(fromLeave, toLeave));
+        }
+        events.add(event);
+        orderList();
+    }
 
-	public void printScheduler() {
-		for (int i = 0; i < events.size(); i++) {
-			System.out.println("Evento: " + events.get(i) + " Tempo: " + timeArray.get(i)+ " Sorteio: " + drawArray.get(i));
-		}
+    public Event nextEvent() throws Exception {
+        if (events.isEmpty())
+            throw new Exception("Empty event list");
+        Event event = events.remove(0);
+        checkedEvents.add(event);
+        return event;
+    }
+
+    private void orderList() {
+        Collections.sort(events, Comparator.comparing(Event::getExecutionTime));
+    }
+
+    public void checkList(){
+		System.out.println(checkedEvents.toString());
 	}
 
 }

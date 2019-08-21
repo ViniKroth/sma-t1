@@ -1,89 +1,78 @@
 package br.pucrs.sma.queue;
 
-import br.pucrs.sma.util.NumberGenerator;
-
-import java.util.LinkedList;
-import java.util.Queue;
+import br.pucrs.sma.model.Event;
+import type.EventType;
 
 // PT-BR: Estrutura de Fila Simples
 public class SimpleQueue {
 
-	private int size = 0;
-	private int timer = 0;
+    private int size = 0;
+    private double globalTime = 0;
 
-	// Kendall Notation
-	private char A = 'G'; // distribution
-	private char B = 'G';
-	private int C = 1; // number of servers in the line
-	private int K = 1; // queue capacity
+    // Kendall Notation
+    private char A = 'G'; // distribution
+    private char B = 'G';
+    private int C = 1; // number of servers in the line
+    private int K = 1; // queue capacity
 
-	private int fromArrival;
-	private int toArrival;
-	private int fromLeave;
-	private int toLeave;
+    private double queueStates[];
 
-	private Scheduler scheduler;
+    private Scheduler scheduler;
 
-	public SimpleQueue(int C, int K) {
-		this.C = C;
-		this.K = K;
-	}
+    public SimpleQueue(int size, double globalTime, int c, int k, Scheduler scheduler) {
+        this.size = size;
+        this.globalTime = globalTime;
+        C = c;
+        K = k;
+        this.scheduler = scheduler;
+        queueStates = new double[K + 1];
+        for (int i = 0; i < queueStates.length; i++) {
+            queueStates[i] = 0;
+        }
+    }
 
-	public SimpleQueue(char A, char B, int C, int K, int fromArrival, int toArrival, int fromLeave, int toLeave,
-			Scheduler scheduler, int timer_inicial) {
-		this.A = A;
-		this.B = B;
-		this.C = C;
-		this.K = K;
-		this.fromArrival = fromArrival;
-		this.toArrival = toArrival;
-		this.fromLeave = fromLeave;
-		this.toLeave = toLeave;
-		this.scheduler = scheduler;
-		this.timer = timer_inicial;
-	}
+    public SimpleQueue(int size, int globalTime, int c, int k, int fromArrival, int toArrival, int fromLeave, int toLeave,
+                       double[] queueStates, Scheduler scheduler) {
 
-	public void arrive() throws Exception {
-		if (size >= K)
-			throw new Exception("Queue reached maximum size");
+        this.size = size;
+        this.globalTime = globalTime;
+        C = c;
+        K = k;
+        this.scheduler = scheduler;
+    }
 
-		// Cont Tempo
-		if (size < K) {
-			size++;
-			if (size <= 1) {
-				// agendaSaida(timer+NumberGenerator.getInstance().nextRandom(fromLeave,toLeave))
-				scheduleLeave(timer, NumberGenerator.getInstance().nextRandom(fromLeave, toLeave));
-			}
-		}
-		// agendaChegada(timer+NumberGenerator.getInstance().nextRandom(fromArrival,toArrival))
-		scheduleArrival(timer, NumberGenerator.getInstance().nextRandom(fromArrival, toArrival));
+    public void arrive(Event event) throws Exception {
+        updateTime(event.getExecutionTime());
+        if (size >= K)
+            throw new Exception("Queue reached maximum size");
 
-	}
+        // Cont Tempo
+        if (size < K) {
+            size++;
+            if (size <= 1) {
+                scheduler.schedule(EventType.LEAVE, globalTime);
+            }
+        }
+        scheduler.schedule(EventType.ARRIVAL, globalTime);
+    }
 
-	public void leave() throws Exception {
-		if (size <= 0)
-			throw new Exception("Queue is empty");
-		timer++;
-		size--;
-		if (size >= 1) {
-			// agendaSaida(timer+NumberGenerator.getInstance().nextRandom(fromLeave,toLeave))
-			scheduleLeave(timer, NumberGenerator.getInstance().nextRandom(fromLeave, toLeave));
-		}
-	}
+    public void leave(Event event) throws Exception {
+        if (size <= 0)
+            throw new Exception("Queue is empty");
+        updateTime(event.getExecutionTime());
+        size--;
+        if (size >= 1) {
+            scheduler.schedule(EventType.LEAVE, globalTime);
+        }
+    }
 
-	public void scheduleLeave(double timer, double rnd_number) {
-		// U(A,B) = (B-A) x rnd_number + A
-		double draw = (toLeave - fromLeave) * rnd_number + fromLeave;
-		this.scheduler.insert(0, timer + draw, draw);
-	}
+    public int getSize() {
+        return this.size;
+    }
 
-	public void scheduleArrival(double timer, double rnd_number) {
-		// U(A,B) = (B-A) x rnd_number + A
-		double draw = (toArrival - fromArrival) * rnd_number + fromArrival;
-		this.scheduler.insert(1, timer + draw, draw);
-	}
+    private void updateTime(double eventTime) {
+        queueStates[size] = eventTime - globalTime;
+        globalTime = eventTime;
+    }
 
-	public int getSize() {
-		return this.size;
-	}
 }
