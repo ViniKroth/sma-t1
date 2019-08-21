@@ -9,7 +9,7 @@ public class Simulator {
     private SimpleQueue queue;
     private Scheduler scheduler;
 
-    public Simulator(int K, SimpleQueue queue, Scheduler scheduler) {
+    public Simulator(SimpleQueue queue, Scheduler scheduler) {
 
         this.queue = queue;
         this.scheduler = scheduler;
@@ -24,7 +24,7 @@ public class Simulator {
         // Estado inicial: Chegada = 2,00
         this.queue.arrive(new Event(EventType.ARRIVAL, 2.0));
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 100; i++) {
             Event event = scheduler.nextEvent();
             if (event.getEventType().equals(EventType.ARRIVAL)) {
                 queue.arrive(event);
@@ -32,9 +32,9 @@ public class Simulator {
                 queue.leave(event);
         }
 
-
-        System.out.println("\nESCALONADOR:");
-        System.out.println("  Eventos(0 - Saida  1 - Chegada)  ");
-        this.scheduler.printScheduler();
+		scheduler.checkList();
+//        System.out.println("\nESCALONADOR:");
+//        System.out.println("  Eventos(0 - Saida  1 - Chegada)  ");
+       // this.scheduler.printScheduler();
     }
 }

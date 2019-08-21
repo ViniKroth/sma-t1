@@ -43,7 +43,7 @@ public class SimpleQueue {
 
     public void arrive(Event event) throws Exception {
         updateTime(event.getExecutionTime());
-        if (size >= K)
+        if (size > K)
             throw new Exception("Queue reached maximum size");
 
         // Cont Tempo
@@ -57,7 +57,7 @@ public class SimpleQueue {
     }
 
     public void leave(Event event) throws Exception {
-        if (size <= 0)
+        if (size < 0)
             throw new Exception("Queue is empty");
         updateTime(event.getExecutionTime());
         size--;

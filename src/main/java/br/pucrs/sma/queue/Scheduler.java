@@ -52,6 +52,7 @@ public class Scheduler {
             event = new Event(eventType, globalTime + NumberGenerator.getInstance()
                     .nextRandom(fromLeave, toLeave));
         }
+        System.out.println(globalTime);
         events.add(event);
         orderList();
     }
