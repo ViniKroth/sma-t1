@@ -4,7 +4,7 @@ import br.pucrs.sma.model.Event;
 import br.pucrs.sma.model.EventType;
 
 // Simple Queue Structure
-public class SimpleQueue {
+public class Queue {
 
     private int queueSize = 0;
     private double globalTime = 0;
@@ -22,9 +22,7 @@ public class SimpleQueue {
 
     // The Constructor will create the basic table for the queue with the following columns filled:
     // queueSize | globalTime | States 0...n |
-    public SimpleQueue(int queueSize, double globalTime, int c, int k, Scheduler scheduler) {
-        this.queueSize = queueSize;
-        this.globalTime = globalTime;
+    public Queue(int c, int k, Scheduler scheduler) {
         this.C = c;
         this.K = k;
         this.scheduler = scheduler;

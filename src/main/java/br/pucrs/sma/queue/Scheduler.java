@@ -31,15 +31,14 @@ public class Scheduler {
     }
 
     public void schedule(EventType eventType, double globalTime) {
+        if(NumberGenerator.getInstance().isFinished()) return;
         Event event;
         if (eventType.equals(EventType.ARRIVAL)) {
-            event = new Event(eventType, globalTime + NumberGenerator.getInstance()
-                    .nextRandom(fromArrival, toArrival));
+            event = new Event(eventType, globalTime + draw(fromArrival, toArrival, NumberGenerator.getInstance().nextRandom()));
         } else {
-            event = new Event(eventType, globalTime + NumberGenerator.getInstance()
-                    .nextRandom(fromLeave, toLeave));
+            event = new Event(eventType, globalTime + draw(fromLeave, toLeave, NumberGenerator.getInstance().nextRandom()));
         }
-        // System.out.println(globalTime);
+        System.out.println(eventType + " " + event.getExecutionTime());
         events.add(event);
         orderList();
     }
@@ -50,6 +49,10 @@ public class Scheduler {
         Event event = events.remove(0);
         checkedEvents.add(event);
         return event;
+    }
+
+    private double draw(int from, int to, double value) {
+        return (to - from) * value + from;
     }
 
     private void orderList() {

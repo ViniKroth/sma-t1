@@ -13,11 +13,17 @@ public class NumberGenerator {
 
     private static NumberGenerator instance;
 
-    private NumberGenerator() {}
+    // These Variables are only used during test mode, you can turn it off by changing it to false
+    private static boolean isTestMode = true;
+    private int testCont = 0;
+    public static double[] randomNumbersTest = {0.3276, 0.8851, 0.1643, 0.5542, 0.6813, 0.7221, 0.9881};
+
+    private NumberGenerator() {
+    }
 
     public static NumberGenerator getInstance() {
         if (instance == null) {
-            synchronized(NumberGenerator.class) {
+            synchronized (NumberGenerator.class) {
                 if (instance == null) {
                     instance = new NumberGenerator();
                 }
@@ -26,16 +32,27 @@ public class NumberGenerator {
         return instance;
     }
 
-    public synchronized double nextRandom(int from, int to) {
+    public synchronized double nextRandom() {
+        if (isTestMode)
+            return generateNextTest();
+        else
+            return generateNextRandom();
+    }
+
+    public synchronized double generateNextRandom() {
         Xi = (a * X0 + c) % M;
         X0 = Xi;
         // Sets the value to be between 0 and 1 and it should contain only 4 decimal numbers
         double value = (double) Xi / M;
-        double scale = Math.pow(10, 4);
-        return Math.round(convertToRange(from, to, value) * scale) / scale;
+        return Utils.convertToFourScale(value);
     }
 
-    private synchronized double convertToRange(int from, int to, double value){
-        return (to - from) * value + from;
+    public synchronized double generateNextTest() {
+        return randomNumbersTest[testCont++];
+    }
+
+    public synchronized boolean isFinished() {
+        if (isTestMode && testCont >= randomNumbersTest.length) return true;
+        else return false;
     }
 }
