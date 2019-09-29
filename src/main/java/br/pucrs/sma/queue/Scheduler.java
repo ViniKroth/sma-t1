@@ -2,45 +2,32 @@ package br.pucrs.sma.queue;
 
 import br.pucrs.sma.model.Event;
 import br.pucrs.sma.util.NumberGenerator;
-import type.EventType;
+import br.pucrs.sma.model.EventType;
 
 import java.util.*;
 
 // PT-BR: Escalonador
 public class Scheduler {
 
-    public List<Event> events;
-    private List<Double> timeArray;
-
     private int fromArrival;
     private int toArrival;
     private int fromLeave;
     private int toLeave;
+
+    private List<Event> events;
+    private List<Double> timeArray;
     private List<Event> checkedEvents;
 
+    // PT-BR: Recebe as configurações de Unidade de tempo da fila
     public Scheduler(int fromArrival, int toArrival, int fromLeave, int toLeave) {
-        this.events = new ArrayList<>();
-        this.timeArray = new ArrayList<>();
         this.fromArrival = fromArrival;
         this.toArrival = toArrival;
         this.fromLeave = fromLeave;
         this.toLeave = toLeave;
-        checkedEvents = new ArrayList<>();
-    }
 
-    public List<Event> getEvents() {
-        return events;
-    }
-
-    public List<Double> getTime() {
-        return timeArray;
-    }
-
-
-    public void printScheduler() {
-        for (int i = 0; i < events.size(); i++) {
-            System.out.println("Evento: " + events.get(i) + " Tempo: " + timeArray.get(i));
-        }
+        this.events = new ArrayList<>();
+        this.timeArray = new ArrayList<>();
+        this.checkedEvents = new ArrayList<>();
     }
 
     public void schedule(EventType eventType, double globalTime) {
@@ -52,7 +39,7 @@ public class Scheduler {
             event = new Event(eventType, globalTime + NumberGenerator.getInstance()
                     .nextRandom(fromLeave, toLeave));
         }
-        System.out.println(globalTime);
+        // System.out.println(globalTime);
         events.add(event);
         orderList();
     }
@@ -69,8 +56,19 @@ public class Scheduler {
         Collections.sort(events, Comparator.comparing(Event::getExecutionTime));
     }
 
-    public void checkList(){
-		System.out.println(checkedEvents.toString());
-	}
+    public void checkList() {
+        System.out.println(checkedEvents.toString());
+    }
 
+    // Get methods
+    public List<Event> getEvents() {
+        return events;
+    }
+
+    // Print
+    public void printScheduler() {
+        for (int i = 0; i < events.size(); i++) {
+            System.out.println("Evento: " + events.get(i) + " Tempo: " + timeArray.get(i));
+        }
+    }
 }

@@ -1,88 +1,72 @@
 package br.pucrs.sma.queue;
 
 import br.pucrs.sma.model.Event;
-import type.EventType;
+import br.pucrs.sma.model.EventType;
 
-// PT-BR: Estrutura de Fila Simples
+// Simple Queue Structure
 public class SimpleQueue {
 
-    private int size = 0;
+    private int queueSize = 0;
     private double globalTime = 0;
     private int losses = 0;
 
     // Kendall Notation
-    private char A = 'G'; // distribution
-    private char B = 'G';
-    private int C = 1; // number of servers in the line
-    private int K = 1; // queue capacity
+    private char A = 'G'; // distribution of arrival
+    private char B = 'G'; // distribution of departure
+    private int C = 1;    // number of servers in the line
+    private int K = 1;    // queue capacity
 
     private double queueStates[];
 
     private Scheduler scheduler;
 
-    public SimpleQueue(int size, double globalTime, int c, int k, Scheduler scheduler) {
-        this.size = size;
+    // The Constructor will create the basic table for the queue with the following columns filled:
+    // queueSize | globalTime | States 0...n |
+    public SimpleQueue(int queueSize, double globalTime, int c, int k, Scheduler scheduler) {
+        this.queueSize = queueSize;
         this.globalTime = globalTime;
-        C = c;
-        K = k;
+        this.C = c;
+        this.K = k;
         this.scheduler = scheduler;
-        queueStates = new double[K + 1];
+        this.queueStates = new double[K + 1];
         for (int i = 0; i < queueStates.length; i++) {
             queueStates[i] = 0;
         }
     }
 
-    public SimpleQueue(int size, int globalTime, int c, int k, int fromArrival, int toArrival, int fromLeave, int toLeave,
-                       double[] queueStates, Scheduler scheduler) {
-
-        this.size = size;
-        this.globalTime = globalTime;
-        C = c;
-        K = k;
-        this.scheduler = scheduler;
-    }
-
-    public void arrive(Event event) throws Exception {
+    public void arrive(Event event) {
+        // if (queueSize > K) throw new Exception("Queue reached maximum size");
         updateTime(event.getExecutionTime());
-        if (size > K)
-            throw new Exception("Queue reached maximum size");
 
-        // Cont Tempo
-        if (size < K) {
-            size++;
-            if (size <= 2) {
-                scheduler.schedule(EventType.LEAVE, globalTime);
-            }
-        }
-        else
-            losses++;
+        if (queueSize < K) {
+            queueSize++;
+            if (queueSize <= C) scheduler.schedule(EventType.LEAVE, globalTime);
+        } else losses++;
+
         scheduler.schedule(EventType.ARRIVAL, globalTime);
     }
 
     public void leave(Event event) throws Exception {
-        if (size < 0)
-            throw new Exception("Queue is empty");
-        updateTime(event.getExecutionTime());
-        size--;
-        if (size >= 2) {
-            scheduler.schedule(EventType.LEAVE, globalTime);
-        }
-    }
+        if (queueSize < 0) throw new Exception("Queue is empty");
 
-    public int getSize() {
-        return this.size;
+        updateTime(event.getExecutionTime());
+        queueSize--;
+
+        if (queueSize >= C) scheduler.schedule(EventType.LEAVE, globalTime);
     }
 
     private void updateTime(double eventTime) {
-        queueStates[size]  += eventTime - globalTime;
+        queueStates[queueSize] += eventTime - globalTime;
         globalTime = eventTime;
     }
 
-    public void printPercentages () {
-        for(int i =0; i<queueStates.length; i++)
-        System.out.println(" Estado: " + i + " = " + queueStates[i]/globalTime);
+    public void printPercentages() {
+        for (int i = 0; i < queueStates.length; i++)
+            System.out.println("Estado: " + i + " = " + queueStates[i] / globalTime);
 
         System.out.println("Perdas: " + losses);
     }
 
+    // Getters
+    public int getQueueSize() { return this.queueSize; }
 }

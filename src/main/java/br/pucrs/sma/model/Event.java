@@ -1,7 +1,5 @@
 package br.pucrs.sma.model;
 
-import type.EventType;
-
 public class Event {
 
     private EventType eventType;
