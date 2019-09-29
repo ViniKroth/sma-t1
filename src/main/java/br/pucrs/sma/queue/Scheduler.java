@@ -18,6 +18,10 @@ public class Scheduler {
     private List<Double> timeArray;
     private List<Event> checkedEvents;
 
+    public Scheduler() {
+
+    }
+
     // PT-BR: Recebe as configurações de Unidade de tempo da fila
     public Scheduler(int fromArrival, int toArrival, int fromLeave, int toLeave) {
         this.fromArrival = fromArrival;
@@ -30,17 +34,27 @@ public class Scheduler {
         this.checkedEvents = new ArrayList<>();
     }
 
-    public void schedule(EventType eventType, double globalTime) {
-        if(NumberGenerator.getInstance().isFinished()) return;
-        Event event;
-        if (eventType.equals(EventType.ARRIVAL)) {
-            event = new Event(eventType, globalTime + draw(fromArrival, toArrival, NumberGenerator.getInstance().nextRandom()));
-        } else {
-            event = new Event(eventType, globalTime + draw(fromLeave, toLeave, NumberGenerator.getInstance().nextRandom()));
-        }
-        System.out.println(eventType + " " + event.getExecutionTime());
+    public void addEvent(Event event) {
         events.add(event);
         orderList();
+    }
+
+    public void schedule(EventType eventType, Queue fromQueue, Queue toQueue, double globalTime) throws Exception {
+        if (NumberGenerator.getInstance().isFinished())
+            return;
+        switch (eventType) {
+            case ARRIVAL:
+                addEvent(new Event(eventType, fromQueue, toQueue, globalTime + draw(fromArrival, toArrival, NumberGenerator.getInstance().nextRandom())));
+                break;
+            case LEAVE:
+                addEvent(new Event(eventType, fromQueue, toQueue, globalTime + draw(fromLeave, toLeave, NumberGenerator.getInstance().nextRandom())));
+                break;
+            case TRANSITION:
+                addEvent(new Event(eventType, fromQueue, toQueue, globalTime + draw(fromLeave, toLeave, NumberGenerator.getInstance().nextRandom())));
+                break;
+            default:
+                throw new Exception("Invalid EventType detected!");
+        }
     }
 
     public Event nextEvent() throws Exception {

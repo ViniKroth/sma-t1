@@ -8,15 +8,15 @@ public class NumberGenerator {
     private static long a = 1140671485;
     private static long c = 12820163;
     private static long M = 16777218;
-    private static long X0 = 1;
+    public static long X0 = 1;
     private static long Xi = X0;
+
+    public static int maxRandoms = Integer.MAX_VALUE;
 
     private static NumberGenerator instance;
 
-    // These Variables are only used during test mode, you can turn it off by changing it to false
-    private static boolean isTestMode = true;
-    private int testCont = 0;
-    public static double[] randomNumbersTest = {0.3276, 0.8851, 0.1643, 0.5542, 0.6813, 0.7221, 0.9881};
+    //public static double[] randomNumbersTest = {0.3276, 0.8851, 0.1643, 0.5542, 0.6813, 0.7221, 0.9881};
+    //public static double[] randomNumbersTest = {0.2176, 0.0103, 0.1109, 0.3456, 0.9910, 0.2323, 0.9211, 0.0322, 0.1211, 0.5131, 0.7208, 0.9172, 0.9922, 0.8324, 0.5011, 0.2931};
 
     private NumberGenerator() {
     }
@@ -33,26 +33,13 @@ public class NumberGenerator {
     }
 
     public synchronized double nextRandom() {
-        if (isTestMode)
-            return generateNextTest();
-        else
-            return generateNextRandom();
-    }
-
-    public synchronized double generateNextRandom() {
+        maxRandoms--;
         Xi = (a * X0 + c) % M;
         X0 = Xi;
-        // Sets the value to be between 0 and 1 and it should contain only 4 decimal numbers
-        double value = (double) Xi / M;
-        return Utils.convertToFourScale(value);
-    }
-
-    public synchronized double generateNextTest() {
-        return randomNumbersTest[testCont++];
+        return (double) Xi / M;
     }
 
     public synchronized boolean isFinished() {
-        if (isTestMode && testCont >= randomNumbersTest.length) return true;
-        else return false;
+        return maxRandoms > 0;
     }
 }
