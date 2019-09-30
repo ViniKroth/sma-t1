@@ -16,4 +16,10 @@ public class EventProbability {
     public double getProbability() {
         return probability;
     }
+
+	@Override
+	public String toString() {
+		return "EventProbability [event=" + event + ", probability=" + probability + "]";
+	}   
 }
+

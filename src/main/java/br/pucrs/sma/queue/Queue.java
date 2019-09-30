@@ -1,5 +1,6 @@
 package br.pucrs.sma.queue;
 
+import br.pucrs.sma.Simulator;
 import br.pucrs.sma.model.Event;
 import br.pucrs.sma.model.EventType;
 import br.pucrs.sma.model.EventProbability;
@@ -7,6 +8,7 @@ import br.pucrs.sma.util.NumberGenerator;
 import br.pucrs.sma.util.Utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -22,8 +24,7 @@ public class Queue {
     private double minLeaveUnitTime;
     private double maxLeaveUnitTime;
 
-    private int queueSize = 0;
-    private double globalTime = 0;
+    private int queueSize = 0;    
     private int losses = 0;
 
     // Kendall Notation
@@ -37,17 +38,20 @@ public class Queue {
     private double arrivalTime = 0;
 
     private Scheduler scheduler;
+    private Simulator simulator;
 
-    public Queue(Scheduler scheduler) {
+    public Queue(Scheduler scheduler, Simulator simulator) {
         this.scheduler = scheduler;
+        this.simulator = simulator;        
     }
 
     // The Constructor will create the basic table for the queue with the following columns filled:
     // queueSize | globalTime | States 0...n |
-    public Queue(int c, int k, Scheduler scheduler) {
+    public Queue(int c, int k, Scheduler scheduler, Simulator simulator) {
         this.C = c;
         this.K = k;
         this.scheduler = scheduler;
+        this.simulator = simulator;
         this.queueStates = new double[K + 1];
         for (int i = 0; i < queueStates.length; i++) {
             queueStates[i] = 0;
@@ -76,7 +80,7 @@ public class Queue {
     }
 
     private void orderEventProbabilityList() {
-        Collections.sort(eventProbabilityList, Comparator.comparing(EventProbability::getProbability));
+        Collections.sort(eventProbabilityList, Comparator.comparing(EventProbability::getProbability, (e1, e2) -> { return e2.compareTo(e1); }));
     }
 
     private Event routing(){
@@ -93,57 +97,46 @@ public class Queue {
 
     //CH-X event
     public void arriveFromNothing(Event event, Queue fromQueue) throws Exception {
-        updateTime(event.getExecutionTime());
+    	simulator.updateTime((event.getExecutionTime()));
 
         if (queueSize < K) {
             queueSize++;
             if (queueSize <= C) {
                 Event chosenEvent = routing();
-                scheduler.schedule(chosenEvent.getEventType(), chosenEvent.getFromQueue(), chosenEvent.getToQueue(), globalTime);
+                scheduler.schedule(chosenEvent.getEventType(), chosenEvent.getFromQueue(), chosenEvent.getToQueue());
             }
         }
         else losses++;
 
-        scheduler.schedule(EventType.ARRIVAL, fromQueue, this,  globalTime);
+        scheduler.schedule(EventType.ARRIVAL, fromQueue, this);
     }
 
     //SA-X event
     public void leaveToNothing(Event event) throws Exception {
         if (queueSize < 0) throw new Exception("Queue is empty");
 
-        updateTime(event.getExecutionTime());
+        simulator.updateTime((event.getExecutionTime()));
         queueSize--;
 
         if (queueSize >= C) {
-            scheduler.schedule(EventType.LEAVE, this, null, globalTime);
+            scheduler.schedule(EventType.LEAVE, this, null);
         }
     }
 
     //P-XY event
     public void transitionQueues(Event event, Queue fromQueue, Queue toQueue) throws Exception {
-        updateTime(event.getExecutionTime());
+    	simulator.updateTime((event.getExecutionTime()));
 
         queueSize--;
         if(queueSize >= C){
             Event chosenEvent = routing();
-            scheduler.schedule(chosenEvent.getEventType(), chosenEvent.getFromQueue(), chosenEvent.getToQueue(), globalTime);
+            scheduler.schedule(chosenEvent.getEventType(), chosenEvent.getFromQueue(), chosenEvent.getToQueue());
         }
         toQueue.setQueueSize(toQueue.getQueueSize()+1);
         if(toQueue.getQueueSize() <= toQueue.getC())
-            scheduler.schedule(EventType.LEAVE, toQueue, null, globalTime);
+            scheduler.schedule(EventType.LEAVE, toQueue, null);
     }
 
-    private void updateTime(double eventTime) {
-        queueStates[queueSize] += eventTime - globalTime;
-        globalTime = eventTime;
-    }
-
-    public void printPercentages() {
-        for (int i = 0; i < queueStates.length; i++)
-            System.out.println("State and %: " + i + " = " + Utils.convertToFourScale(queueStates[i] / globalTime));
-
-        System.out.println("Losses: " + losses);
-    }
 
     // ============== Getters and Setters ==============================================================================
     public int getId() {
@@ -194,14 +187,6 @@ public class Queue {
         this.queueSize = queueSize;
     }
 
-    public double getGlobalTime() {
-        return globalTime;
-    }
-
-    public void setGlobalTime(double globalTime) {
-        this.globalTime = globalTime;
-    }
-
     public int getLosses() {
         return losses;
     }
@@ -231,7 +216,7 @@ public class Queue {
     }
 
     public void setC(int c) {
-        C = c;
+        this.C = c;
     }
 
     public int getK() {
@@ -239,7 +224,10 @@ public class Queue {
     }
 
     public void setK(int k) {
-        K = k;
+        this.K = k;
+        this.queueStates = new double[K + 1];
+        for (int i = 0; i < queueStates.length; i++)
+            queueStates[i] = 0;
     }
 
     public double[] getQueueStates() {
@@ -273,4 +261,16 @@ public class Queue {
     public void setArrivalTime(double arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
+
+	@Override
+	public String toString() {
+		return "Queue [id=" + id + ", minArrivalUnitTime=" + minArrivalUnitTime + ", maxArrivalUnitTime="
+				+ maxArrivalUnitTime + ", minLeaveUnitTime=" + minLeaveUnitTime + ", maxLeaveUnitTime="
+				+ maxLeaveUnitTime + ", queueSize=" + queueSize + ", losses=" + losses
+				+ ", A=" + A + ", B=" + B + ", C=" + C + ", K=" + K + ", eventProbabilityList=" + eventProbabilityList
+				+ ", queueStates=" + Arrays.toString(queueStates) + ", arrivalTime=" + arrivalTime + ", scheduler="
+				+ scheduler + "]";
+	}
+    
+    
 }

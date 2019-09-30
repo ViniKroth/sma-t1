@@ -8,7 +8,7 @@ public class App {
         System.out.println("############# SIMULADOR DE FILAS #############");
         System.out.println("Alunos: Israel Deorce - Larissa Martins - Vinicius Kroth");
         Simulator simulator = new Simulator();
-        //testRandomNumberGenerator();
+        // testRandomNumberGenerator();
     }
 
     public static void testRandomNumberGenerator() {

@@ -57,16 +57,24 @@ public class Event {
     @Override
     public String toString() {
         String str;
-        if(fromQueue != null) {
+        if(fromQueue != null && toQueue != null) {
             str = "Event{" +
                     "eventType=" + eventType +
                     ", fromQueue=" + fromQueue.getId() +
                     ", toQueue=" + toQueue.getId() +
                     ", executionTime=" + executionTime +
                     '}';
+        } else if(fromQueue != null) {
+            str =  "Event{" +
+                    "eventType=" + eventType +
+                    ", fromQueue=" + fromQueue.getId() +
+                    ", toQueue=" + "null" +
+                    ", executionTime=" + executionTime +
+                    '}';
         } else {
             str =  "Event{" +
                     "eventType=" + eventType +
+                    ", fromQueue=" + "null" +
                     ", toQueue=" + toQueue.getId() +
                     ", executionTime=" + executionTime +
                     '}';
