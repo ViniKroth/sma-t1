@@ -35,16 +35,23 @@ public class Simulator {
         for (int i = 0; i < numberOfQueues; i++) {
             registerBaseQueueParams(i);
 
-            for (int j = 0; j < numberOfQueues; j++) {
-                if (i == j) continue;
+            System.out.println("Deseja definir roteamento da fila " + i + " para outra fila? Se sim, digite o id da fila destino. Se nao, digite um valor negativo");
+            int routingTo = in.nextInt();
+            if (!(routingTo <= -1)) {
+                System.out.println("Defina a probabilidade de roteamento da fila (valor entre 0 e 1): " + i + " para a fila " + routingTo + ":");
+                queues.get(i).addEventProbability(new Event(EventType.TRANSITION, queues.get(i), queues.get(routingTo)), in.nextDouble());
+            }
 
-                System.out.println("Defina o valor da probabilidade de rotamento (entre 0 e 1) da fila " + i + " para a fila " + j);
-                System.out.println("#Ou digite um valor negativo para nenhum.#");
-                double routingProbability = in.nextDouble();
+            System.out.println("Deseja definir roteamento da fila " + i + " para fora do sistema? Digite um valor natural para sim, ou negativo para nao:");
+            if (!(in.nextInt() <= -1)) {
+                System.out.println("Defina a probabilidade de roteamento da fila (valor entre 0 e 1): " + i + " para fora do sistema:");
+                queues.get(i).addEventProbability(new Event(EventType.LEAVE, queues.get(i), null), in.nextDouble());
+            }
 
-                if (routingProbability < 0) break;
-
-                queues.get(i).addQueueProbChange(queues.get(j), routingProbability);
+            System.out.println("Deseja definir roteamento da fila " + i + " para si mesmo? Digite um valor natural para sim, ou negativo para nao:");
+            if (!(in.nextInt() <= -1)) {
+                System.out.println("Defina a probabilidade de roteamento da fila (valor entre 0 e 1): " + i + " para fora do sistema:");
+                queues.get(i).addEventProbability(new Event(EventType.TRANSITION, queues.get(i), queues.get(i)), in.nextDouble());
             }
         }
         run();
@@ -109,6 +116,4 @@ public class Simulator {
         System.out.println("Defina o tempo inicial de chegada na fila (nao havendo, defina 0): ");
         queues.get(i).setArrivalTime(in.nextDouble());
     }
-
-    private void re
 }

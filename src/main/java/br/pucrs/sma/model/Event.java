@@ -9,6 +9,12 @@ public class Event {
     private Queue toQueue;
     private Double executionTime;
 
+    public Event(EventType eventType, Queue fromQueue, Queue toQueue){
+        this.eventType = eventType;
+        this.fromQueue = fromQueue;
+        this.toQueue = toQueue;
+    }
+
     public Event(EventType eventType, Queue fromQueue, Queue toQueue, Double executionTime) {
         this.eventType = eventType;
         this.fromQueue = fromQueue;

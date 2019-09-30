@@ -2,10 +2,13 @@ package br.pucrs.sma.queue;
 
 import br.pucrs.sma.model.Event;
 import br.pucrs.sma.model.EventType;
-import br.pucrs.sma.model.QueueProbChange;
+import br.pucrs.sma.model.EventProbability;
+import br.pucrs.sma.util.NumberGenerator;
 import br.pucrs.sma.util.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 // Simple Queue Structure
@@ -29,7 +32,7 @@ public class Queue {
     private int C = 1;    // number of servers in the line
     private int K = 1;    // queue capacity
 
-    List<QueueProbChange<Queue, Double>> queueProbChangeList = new ArrayList<>();
+    List<EventProbability> eventProbabilityList = new ArrayList<>();
     private double queueStates[];
     private double arrivalTime = 0;
 
@@ -55,31 +58,51 @@ public class Queue {
      * It creates a probability of a client to change from this queue to the given queue.
      * The probability can not be higher than 100 percent, or 1.
      */
-    public void addQueueProbChange(Queue queue, Double probChange) throws Exception {
-        if(probChange > 1 || (getMaximumProbChange() + probChange) > 1) {
+    public void addEventProbability(Event event, double probability) throws Exception {
+        if(probability > 1 || (getMaximumEventProbability() + probability) > 1) {
             throw new Exception("Probabilidade de mudança de fila maior que 100%!");
         } else {
-            queueProbChangeList.add(new QueueProbChange<>(queue, probChange));
+            eventProbabilityList.add(new EventProbability(event, probability));
+            orderEventProbabilityList();
         }
     }
 
-    private Double getMaximumProbChange(){
-        Double sum = 0.0;
-        for (int i = 0; i < queueProbChangeList.size(); i++) {
-            sum += queueProbChangeList.get(i).probChance;
+    private double getMaximumEventProbability(){
+        double sum = 0.0;
+        for (int i = 0; i < eventProbabilityList.size(); i++) {
+            sum += eventProbabilityList.get(i).getProbability();
         }
         return sum;
     }
 
+    private void orderEventProbabilityList() {
+        Collections.sort(eventProbabilityList, Comparator.comparing(EventProbability::getProbability));
+    }
+
+    private Event routing(){
+        double rnd = NumberGenerator.getInstance().nextRandom();
+        double sumProbabilities = 0.0;
+        for(EventProbability q : eventProbabilityList){
+            sumProbabilities += q.getProbability();
+            if(rnd < sumProbabilities){
+                return q.getEvent();
+            }
+        }
+        return null;
+    }
+
     //CH-X event
-    public void arriveFromNothing(Event event, Queue fromQueue) {
-        // if (queueSize > K) throw new Exception("Queue reached maximum size");
+    public void arriveFromNothing(Event event, Queue fromQueue) throws Exception {
         updateTime(event.getExecutionTime());
 
         if (queueSize < K) {
             queueSize++;
-            if (queueSize <= C) scheduler.schedule(EventType.LEAVE, this, null, globalTime);
-        } else losses++;
+            if (queueSize <= C) {
+                Event chosenEvent = routing();
+                scheduler.schedule(chosenEvent.getEventType(), chosenEvent.getFromQueue(), chosenEvent.getToQueue(), globalTime);
+            }
+        }
+        else losses++;
 
         scheduler.schedule(EventType.ARRIVAL, fromQueue, this,  globalTime);
     }
@@ -91,16 +114,23 @@ public class Queue {
         updateTime(event.getExecutionTime());
         queueSize--;
 
-        if (queueSize >= C) scheduler.schedule(EventType.LEAVE, this, null, globalTime);
+        if (queueSize >= C) {
+            scheduler.schedule(EventType.LEAVE, this, null, globalTime);
+        }
     }
 
     //P-XY event
-    public void transitionQueues(Event event, Queue fromQueue, Queue toQueue){
+    public void transitionQueues(Event event, Queue fromQueue, Queue toQueue) throws Exception {
+        updateTime(event.getExecutionTime());
+
         queueSize--;
         if(queueSize >= C){
-            if(true)
-            scheduler.schedule(EventType.TRANSITION, fromQueue, toQueue,  globalTime);
+            Event chosenEvent = routing();
+            scheduler.schedule(chosenEvent.getEventType(), chosenEvent.getFromQueue(), chosenEvent.getToQueue(), globalTime);
         }
+        toQueue.setQueueSize(toQueue.getQueueSize()+1);
+        if(toQueue.getQueueSize() <= toQueue.getC())
+            scheduler.schedule(EventType.LEAVE, toQueue, null, globalTime);
     }
 
     private void updateTime(double eventTime) {
@@ -228,12 +258,12 @@ public class Queue {
         this.scheduler = scheduler;
     }
 
-    public List<QueueProbChange<Queue, Double>> getQueueProbChangeList() {
-        return queueProbChangeList;
+    public List<EventProbability> getEventProbabilityList() {
+        return eventProbabilityList;
     }
 
-    public void setQueueProbChangeList(List<QueueProbChange<Queue, Double>> queueProbChangeList) {
-        this.queueProbChangeList = queueProbChangeList;
+    public void setEventProbabilityList(List<EventProbability> eventProbabilityList) {
+        this.eventProbabilityList = eventProbabilityList;
     }
 
     public double getArrivalTime() {

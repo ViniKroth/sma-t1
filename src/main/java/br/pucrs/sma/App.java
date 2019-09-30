@@ -6,7 +6,7 @@ public class App {
 
     public static void main(String[] args) throws Exception {
         System.out.println("############# SIMULADOR DE FILAS #############");
-        System.out.println("Alunos: Israel - Larissa - Vinicius");
+        System.out.println("Alunos: Israel Deorce - Larissa Martins - Vinicius Kroth");
         Simulator simulator = new Simulator();
         //testRandomNumberGenerator();
     }
