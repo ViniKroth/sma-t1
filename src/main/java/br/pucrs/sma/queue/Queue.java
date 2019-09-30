@@ -261,6 +261,11 @@ public class Queue {
     public void setArrivalTime(double arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
+    
+    public void printStates() {
+    	System.out.println(Arrays.toString(queueStates));
+    }
+    
 
 	@Override
 	public String toString() {

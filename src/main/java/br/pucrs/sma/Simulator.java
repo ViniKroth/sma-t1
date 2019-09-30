@@ -8,6 +8,7 @@ import br.pucrs.sma.util.NumberGenerator;
 import br.pucrs.sma.util.Utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -101,7 +102,7 @@ public class Simulator {
             }
         }
 
-        Event event;
+        Event event = null;
         while (!NumberGenerator.getInstance().isFinished()) {
             event = scheduler.nextEvent();
             switch (event.getEventType()) {
@@ -117,10 +118,11 @@ public class Simulator {
                 default:
                     throw new Exception("Invalid EventType detected!");
             }
-        }
+        }        
 
         scheduler.checkList();
-        // queue.printPercentages();
+        System.out.println("QUEUE STATES:");
+        printPercentages(event);
     }
 	
     public void updateTime(double eventTime) {
@@ -134,12 +136,18 @@ public class Simulator {
     	return globalTime;
     }
     
-//    public void printPercentages() {
-//        for (int i = 0; i < queueStates.length; i++)
-//            System.out.println("State and %: " + i + " = " + Utils.convertToFourScale(queueStates[i] / globalTime));
-//
-//        System.out.println("Losses: " + losses);
-//    }
+    public void printPercentages(Event event) {
+    	System.out.println("Last Event: " + event.getEventType());
+    	System.out.println("Global Time: " + globalTime);
+    	for(Queue q : queues) {
+    		System.out.println("Results for Queue " + q.getId()+ ": ");
+    		q.printStates();
+    		System.out.println("Losses: " + q.getLosses());
+    		
+    	}
+//        for (int i = 0; i < queues.length; i++)
+//            System.out.println("State and %: " + i + " = " + Utils.convertToFourScale(queueStates[i] / globalTime));        
+    }
 
     /**
      * This method asks for the user to register the parameters of an specific queue from the array

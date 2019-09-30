@@ -35,8 +35,7 @@ public class NumberGenerator {
     }
     
     public synchronized double nextRandom() {
-    	if(indexArray >= randomNumbersTest.length)
-    		System.exit(0);
+    	maxRandoms--;
     	return randomNumbersTest[indexArray++];
     }    
 
