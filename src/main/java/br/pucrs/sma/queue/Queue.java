@@ -130,6 +130,7 @@ public class Queue {
         queueSize--;
         if(queueSize >= C){
             Event chosenEvent = routing();
+            //System.out.println(chosenEvent);
             scheduler.schedule(chosenEvent.getEventType(), chosenEvent.getFromQueue(), chosenEvent.getToQueue());
         }
         toQueue.setQueueSize(toQueue.getQueueSize()+1);
@@ -263,7 +264,11 @@ public class Queue {
     }
     
     public void printStates() {
-    	System.out.println(Arrays.toString(queueStates));
+    	for(int i=0; i<queueStates.length; i++) {
+    		if(queueStates[i] == 0)
+    			return;
+    		System.out.println("State " + i + " - Timer: " + queueStates[i] +  " Percentage: " + Utils.convertToFourScale(queueStates[i] / simulator.getGlobalTime()));
+    	}
     }
     
 

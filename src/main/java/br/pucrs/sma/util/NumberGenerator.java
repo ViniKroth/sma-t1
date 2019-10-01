@@ -16,9 +16,10 @@ public class NumberGenerator {
     private static NumberGenerator instance;
 
     // Variables for testing purpose
+    public static boolean testMode = false;
     public static int maxRandoms = 16;
-    public static int indexArray=0;
-    public static double[] randomNumbersTest = {0.2176, 0.0103, 0.1109, 0.3456, 0.9910, 0.2323, 0.9211, 0.0322, 0.1211, 0.5131, 0.7208, 0.9172, 0.9922, 0.8324, 0.5011, 0.2931};
+    public static int indexArray = 0;
+    public static double[] randomNumbersTest;
 
     private NumberGenerator() {
     }
@@ -35,18 +36,28 @@ public class NumberGenerator {
     }
     
     public synchronized double nextRandom() {
+    	if(testMode)
+    		return nextRandomTest();
+    	return nextRandomTrue();
+    }
+    
+    public synchronized double nextRandomTest() {
     	maxRandoms--;
     	return randomNumbersTest[indexArray++];
     }    
 
-//    public synchronized double nextRandom() {
-//        maxRandoms--;
-//        Xi = (a * X0 + c) % M;
-//        X0 = Xi;
-//        return (double) Xi / M;
-//    }
+    public synchronized double nextRandomTrue() {
+        maxRandoms--;
+        Xi = (a * X0 + c) % M;
+        X0 = Xi;
+        return (double) Xi / M;
+    }
 
     public synchronized boolean isFinished() {
         return maxRandoms <= 0;
+    }
+    
+    public synchronized void setRandomNumbersTest(double[] randomNumbersTest) {
+    	this.randomNumbersTest = randomNumbersTest;
     }
 }

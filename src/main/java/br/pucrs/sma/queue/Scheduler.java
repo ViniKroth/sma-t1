@@ -26,7 +26,6 @@ public class Scheduler {
         events.add(event);
         orderList();
         checkedEvents.add(event);
-        System.out.println(event);
     }
 
     public void schedule(EventType eventType, Queue fromQueue, Queue toQueue) throws Exception {
@@ -49,7 +48,6 @@ public class Scheduler {
         if (events.isEmpty())
             throw new Exception("Empty event list");
         Event event = events.remove(0);
-        checkedEvents.add(event);
         return event;
     }
 
@@ -61,20 +59,15 @@ public class Scheduler {
         Collections.sort(events, Comparator.comparing(Event::getExecutionTime));
     }
 
-    public void checkList() {
-        System.out.println(checkedEvents.toString());
+    public void printScheduler() {
+        for(Event e : checkedEvents) {
+        	System.out.println(e);
+        }
     }
 
     // Get methods
     public List<Event> getEvents() {
         return events;
-    }
-
-    // Print
-    public void printScheduler() {
-        for (int i = 0; i < events.size(); i++) {
-            System.out.println("Evento: " + events.get(i) + " Tempo: " + timeArray.get(i));
-        }
     }
 
 	@Override
