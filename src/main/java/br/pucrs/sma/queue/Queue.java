@@ -33,7 +33,7 @@ public class Queue {
     private int C = 1;    // number of servers in the line
     private int K = 1;    // queue capacity
 
-    List<EventProbability> eventProbabilityList = new ArrayList<>();
+    private List<EventProbability> eventProbabilityList = new ArrayList<>();
     private double queueStates[];
     private double arrivalTime = 0;
 
@@ -86,10 +86,10 @@ public class Queue {
     private Event routing(){
         double rnd = NumberGenerator.getInstance().nextRandom();
         double sumProbabilities = 0.0;
-        for(EventProbability q : eventProbabilityList){
-            sumProbabilities += q.getProbability();
+        for(EventProbability event : eventProbabilityList){
+            sumProbabilities += event.getProbability();
             if(rnd < sumProbabilities){
-                return q.getEvent();
+                return event.getEvent();
             }
         }
         return null;
