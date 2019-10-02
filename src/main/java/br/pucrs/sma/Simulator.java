@@ -24,8 +24,8 @@ public class Simulator {
     public Simulator() throws Exception {
     	// Pick the scenario
     	//exerciseOneTest();
-    	exerciseTwoTest();
-    	//modelTest();
+    	//exerciseTwoTest();
+    	modelTest();
     	//askUser();
 
         run();
@@ -69,7 +69,12 @@ public class Simulator {
     public void updateTime(double eventTime) {
     	for(Queue q : queues) {
     		//System.out.println(count++);
-    		q.getQueueStates()[q.getQueueSize()] += eventTime - globalTime;
+    		try {
+				q.getQueueStates()[q.getQueueSize()] += eventTime - globalTime;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     	}
         globalTime = eventTime;
     }
