@@ -1,5 +1,6 @@
 package br.pucrs.sma;
 
+import br.pucrs.sma.model.ConfigDto;
 import br.pucrs.sma.model.Event;
 import br.pucrs.sma.model.EventType;
 import br.pucrs.sma.queue.Queue;
@@ -18,15 +19,39 @@ public class Simulator {
     private double globalTime = 0;
     private Scanner in = new Scanner(System.in);
 
-    public Simulator() throws Exception {
+    public Simulator(ConfigDto configDto) throws Exception {
     	// Pick the scenario
     	//exerciseOneTest();
     	//exerciseTwoTest();
-    	modelTest();
+    	//modelTest();
     	//askUser();
+
+		populateSystem(configDto);
 
         run();
     }
+
+	private void populateSystem(ConfigDto configDto) throws Exception {
+		NumberGenerator.setMaxRandoms(configDto.getMaxRandoms());
+		NumberGenerator.setX0(configDto.getX0());
+		NumberGenerator.setA(configDto.getA());
+		NumberGenerator.setC(configDto.getC());
+		NumberGenerator.setM(configDto.getM());
+
+		queues = configDto.getQueues();
+
+
+
+		queues.get(0).addEventProbability(new Event(EventType.TRANSITION, queues.get(0), queues.get(1)), 0.8);
+		queues.get(0).addEventProbability(new Event(EventType.TRANSITION, queues.get(0), queues.get(2)), 0.2);
+
+		queues.get(1).addEventProbability(new Event(EventType.TRANSITION, queues.get(1), queues.get(0)), 0.3);
+		queues.get(1).addEventProbability(new Event(EventType.TRANSITION, queues.get(1), queues.get(2)), 0.5);
+		queues.get(1).addEventProbability(new Event(EventType.LEAVE, queues.get(1), null), 0.2);
+
+		queues.get(2).addEventProbability(new Event(EventType.TRANSITION, queues.get(2), queues.get(1)), 0.7);
+		queues.get(2).addEventProbability(new Event(EventType.LEAVE, queues.get(2), null), 0.3);
+	}
 
 	public void run() throws Exception {
 
@@ -91,52 +116,52 @@ public class Simulator {
     	}
     }
       
-    private void modelTest() throws Exception {
-    	NumberGenerator.maxRandoms = 100000;
-    	double[] randomNumbersTest = {0.3281, 0.1133, 0.3332, 0.5634, 0.1099, 0.1221, 0.7271, 0.0301, 0.8291, 0.3131, 0.5232, 0.7291, 0.9129, 0.8723, 0.4101, 0.2209};
-    	NumberGenerator.getInstance().setRandomNumbersTest(randomNumbersTest);  
-    	NumberGenerator.X0 = 1557486468894L; 
-    	
-    	Queue one = new Queue(scheduler, this);
-    	one.setId(0);
-    	one.setC(1);
-    	one.setK(999);
-    	one.setMinArrivalUnitTime(1);
-    	one.setMaxArrivalUnitTime(4);
-    	one.setMinLeaveUnitTime(1);
-    	one.setMaxLeaveUnitTime(1.5);
-    	one.setArrivalTime(1.0);
-    	
-    	Queue two = new Queue(scheduler, this);
-    	two.setId(1);
-    	two.setC(3);
-    	two.setK(5);
-    	two.setMinLeaveUnitTime(5);
-    	two.setMaxLeaveUnitTime(10);
-    	two.setArrivalTime(0);
-    	
-    	Queue three = new Queue(scheduler, this);
-    	three.setId(2);
-    	three.setC(2);
-    	three.setK(8);
-    	three.setMinLeaveUnitTime(10);
-    	three.setMaxLeaveUnitTime(20);
-    	three.setArrivalTime(0);  
-    	
-    	queues.add(one);
-    	queues.add(two);
-    	queues.add(three);
-    	
-    	queues.get(0).addEventProbability(new Event(EventType.TRANSITION, queues.get(0), queues.get(1)), 0.8);
-    	queues.get(0).addEventProbability(new Event(EventType.TRANSITION, queues.get(0), queues.get(2)), 0.2);
-    	
-    	queues.get(1).addEventProbability(new Event(EventType.TRANSITION, queues.get(1), queues.get(0)), 0.3);
-    	queues.get(1).addEventProbability(new Event(EventType.TRANSITION, queues.get(1), queues.get(2)), 0.5);
-    	queues.get(1).addEventProbability(new Event(EventType.LEAVE, queues.get(1), null), 0.2);
-    	
-    	queues.get(2).addEventProbability(new Event(EventType.TRANSITION, queues.get(2), queues.get(1)), 0.7);
-    	queues.get(2).addEventProbability(new Event(EventType.LEAVE, queues.get(2), null), 0.3);
-    }
+//    private void modelTest() throws Exception {
+//    	NumberGenerator.maxRandoms = 100000;
+//    	double[] randomNumbersTest = {0.3281, 0.1133, 0.3332, 0.5634, 0.1099, 0.1221, 0.7271, 0.0301, 0.8291, 0.3131, 0.5232, 0.7291, 0.9129, 0.8723, 0.4101, 0.2209};
+//    	NumberGenerator.getInstance().setRandomNumbersTest(randomNumbersTest);
+//    	NumberGenerator.X0 = 1557486468894L;
+//
+//    	Queue one = new Queue(scheduler, this);
+//    	one.setId(0);
+//    	one.setC(1);
+//    	one.setK(999);
+//    	one.setMinArrivalUnitTime(1);
+//    	one.setMaxArrivalUnitTime(4);
+//    	one.setMinLeaveUnitTime(1);
+//    	one.setMaxLeaveUnitTime(1.5);
+//    	one.setArrivalTime(1.0);
+//
+//    	Queue two = new Queue(scheduler, this);
+//    	two.setId(1);
+//    	two.setC(3);
+//    	two.setK(5);
+//    	two.setMinLeaveUnitTime(5);
+//    	two.setMaxLeaveUnitTime(10);
+//    	two.setArrivalTime(0);
+//
+//    	Queue three = new Queue(scheduler, this);
+//    	three.setId(2);
+//    	three.setC(2);
+//    	three.setK(8);
+//    	three.setMinLeaveUnitTime(10);
+//    	three.setMaxLeaveUnitTime(20);
+//    	three.setArrivalTime(0);
+//
+//    	queues.add(one);
+//    	queues.add(two);
+//    	queues.add(three);
+//
+//    	queues.get(0).addEventProbability(new Event(EventType.TRANSITION, queues.get(0), queues.get(1)), 0.8);
+//    	queues.get(0).addEventProbability(new Event(EventType.TRANSITION, queues.get(0), queues.get(2)), 0.2);
+//
+//    	queues.get(1).addEventProbability(new Event(EventType.TRANSITION, queues.get(1), queues.get(0)), 0.3);
+//    	queues.get(1).addEventProbability(new Event(EventType.TRANSITION, queues.get(1), queues.get(2)), 0.5);
+//    	queues.get(1).addEventProbability(new Event(EventType.LEAVE, queues.get(1), null), 0.2);
+//
+//    	queues.get(2).addEventProbability(new Event(EventType.TRANSITION, queues.get(2), queues.get(1)), 0.7);
+//    	queues.get(2).addEventProbability(new Event(EventType.LEAVE, queues.get(2), null), 0.3);
+//    }
 
     private void exerciseTwoTest() throws Exception {
     	NumberGenerator.testMode = true;
@@ -205,44 +230,44 @@ public class Simulator {
 		
 	}
    
-    public void askUser() throws Exception {
-      System.out.println("Defina o valor da semente XO para o gerador de numeros aleatorios:");
-      NumberGenerator.X0 = in.nextLong();
-
-      System.out.println("Defina a quantidade de numeros aleatorios a serem gerados:");
-      NumberGenerator.maxRandoms = in.nextInt();
-
-      System.out.println("Defina a quantidade de filas do sistema:");
-      int numberOfQueues = in.nextInt();
-
-      for (int i = 0; i < numberOfQueues; i++)
-          queues.add(new Queue(scheduler, this));
-
-      System.out.println("#### Definindo parametros de cada fila das " + numberOfQueues + " filas... ####");
-
-      for (int i = 0; i < numberOfQueues; i++) {
-          registerBaseQueueParams(i);
-
-          System.out.println("Deseja definir roteamento da fila " + i + " para outra fila? Se sim, digite o id da fila destino. Se nao, digite um valor negativo");
-          int routingTo = in.nextInt();
-          if (!(routingTo <= -1)) {
-              System.out.println("Defina a probabilidade de roteamento da fila (valor entre 0 e 1): " + i + " para a fila " + routingTo + ":");
-              queues.get(i).addEventProbability(new Event(EventType.TRANSITION, queues.get(i), queues.get(routingTo)), in.nextDouble());
-          }
-
-          System.out.println("Deseja definir roteamento da fila " + i + " para fora do sistema? Digite um valor natural para sim, ou negativo para nao:");
-          if (!(in.nextInt() <= -1)) {
-              System.out.println("Defina a probabilidade de roteamento da fila (valor entre 0 e 1): " + i + " para fora do sistema:");
-              queues.get(i).addEventProbability(new Event(EventType.LEAVE, queues.get(i), null), in.nextDouble());
-          }
-
-          System.out.println("Deseja definir roteamento da fila " + i + " para si mesmo? Digite um valor natural para sim, ou negativo para nao:");
-          if (!(in.nextInt() <= -1)) {
-              System.out.println("Defina a probabilidade de roteamento da fila (valor entre 0 e 1): " + i + " para fora do sistema:");
-              queues.get(i).addEventProbability(new Event(EventType.TRANSITION, queues.get(i), queues.get(i)), in.nextDouble());
-          }
-      }
-    }
+//    public void askUser() throws Exception {
+//      System.out.println("Defina o valor da semente XO para o gerador de numeros aleatorios:");
+//      NumberGenerator.X0 = in.nextLong();
+//
+//      System.out.println("Defina a quantidade de numeros aleatorios a serem gerados:");
+//      NumberGenerator.maxRandoms = in.nextInt();
+//
+//      System.out.println("Defina a quantidade de filas do sistema:");
+//      int numberOfQueues = in.nextInt();
+//
+//      for (int i = 0; i < numberOfQueues; i++)
+//          queues.add(new Queue(scheduler, this));
+//
+//      System.out.println("#### Definindo parametros de cada fila das " + numberOfQueues + " filas... ####");
+//
+//      for (int i = 0; i < numberOfQueues; i++) {
+//          registerBaseQueueParams(i);
+//
+//          System.out.println("Deseja definir roteamento da fila " + i + " para outra fila? Se sim, digite o id da fila destino. Se nao, digite um valor negativo");
+//          int routingTo = in.nextInt();
+//          if (!(routingTo <= -1)) {
+//              System.out.println("Defina a probabilidade de roteamento da fila (valor entre 0 e 1): " + i + " para a fila " + routingTo + ":");
+//              queues.get(i).addEventProbability(new Event(EventType.TRANSITION, queues.get(i), queues.get(routingTo)), in.nextDouble());
+//          }
+//
+//          System.out.println("Deseja definir roteamento da fila " + i + " para fora do sistema? Digite um valor natural para sim, ou negativo para nao:");
+//          if (!(in.nextInt() <= -1)) {
+//              System.out.println("Defina a probabilidade de roteamento da fila (valor entre 0 e 1): " + i + " para fora do sistema:");
+//              queues.get(i).addEventProbability(new Event(EventType.LEAVE, queues.get(i), null), in.nextDouble());
+//          }
+//
+//          System.out.println("Deseja definir roteamento da fila " + i + " para si mesmo? Digite um valor natural para sim, ou negativo para nao:");
+//          if (!(in.nextInt() <= -1)) {
+//              System.out.println("Defina a probabilidade de roteamento da fila (valor entre 0 e 1): " + i + " para fora do sistema:");
+//              queues.get(i).addEventProbability(new Event(EventType.TRANSITION, queues.get(i), queues.get(i)), in.nextDouble());
+//          }
+//      }
+//    }
     /**
      * This method asks for the user to register the parameters of an specific queue from the array
      */

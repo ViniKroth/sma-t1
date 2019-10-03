@@ -8,7 +8,7 @@ public class NumberGenerator {
     private static long a = 1140671485;
     private static long c = 12820163;
     private static long M = 16777218;
-    public static long X0 = 1;
+    private static long X0 = 1;
     private static long Xi = X0;
 
     //public static int maxRandoms = Integer.MAX_VALUE;
@@ -17,7 +17,7 @@ public class NumberGenerator {
 
     // Variables for testing purpose
     public static boolean testMode = false;
-    public static int maxRandoms = 16;
+    private static int maxRandoms = 16;
     public static int indexArray = 0;
     public static double[] randomNumbersTest;
 
@@ -59,5 +59,53 @@ public class NumberGenerator {
     
     public synchronized void setRandomNumbersTest(double[] randomNumbersTest) {
     	this.randomNumbersTest = randomNumbersTest;
+    }
+
+    public static long getA() {
+        return a;
+    }
+
+    public static void setA(long a) {
+        NumberGenerator.a = a;
+    }
+
+    public static long getC() {
+        return c;
+    }
+
+    public static void setC(long c) {
+        NumberGenerator.c = c;
+    }
+
+    public static long getM() {
+        return M;
+    }
+
+    public static void setM(long m) {
+        M = m;
+    }
+
+    public static long getX0() {
+        return X0;
+    }
+
+    public static void setX0(long x0) {
+        X0 = x0;
+    }
+
+    public static long getXi() {
+        return Xi;
+    }
+
+    public static void setXi(long xi) {
+        Xi = xi;
+    }
+
+    public static int getMaxRandoms() {
+        return maxRandoms;
+    }
+
+    public static void setMaxRandoms(int maxRandoms) {
+        NumberGenerator.maxRandoms = maxRandoms;
     }
 }
