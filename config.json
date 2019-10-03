@@ -32,5 +32,24 @@
       "C": 0,
       "K": 0
     }
+  ],
+  "eventProbabilities": [
+    {
+      "eventType": "TRANSITION",
+      "fromQueueId": 0,
+      "toQueueId": 1,
+      "probability": 0.8
+    },
+    {
+      "eventType": "LEAVE",
+      "fromQueueId": 1,
+      "probability": 0.8
+    },
+    {
+      "eventType": "TRANSITION",
+      "fromQueueId": 0,
+      "toQueueId": 2,
+      "probability": 0.2
+    }
   ]
 }

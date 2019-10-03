@@ -11,6 +11,7 @@ public class ConfigDto {
     private Long c;
     private Long M;
     private Long x0;
+    private List<EventProbabilityDto> eventProbabilities;
 
     public Integer getMaxRandoms() {
         return maxRandoms;
@@ -58,5 +59,13 @@ public class ConfigDto {
 
     public void setX0(Long x0) {
         this.x0 = x0;
+    }
+
+    public List<EventProbabilityDto> getEventProbabilities() {
+        return eventProbabilities;
+    }
+
+    public void setEventProbabilities(List<EventProbabilityDto> eventProbabilities) {
+        this.eventProbabilities = eventProbabilities;
     }
 }

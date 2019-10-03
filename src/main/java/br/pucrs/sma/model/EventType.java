@@ -1,7 +1,15 @@
 package br.pucrs.sma.model;
 
-public enum EventType {
+import java.io.Serializable;
+
+public enum EventType implements Serializable {
     ARRIVAL,
     LEAVE,
-    TRANSITION
+    TRANSITION;
+
+    public String getStatus() {
+        return this.name();
+    }
 }
+
+

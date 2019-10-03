@@ -1,16 +1,12 @@
 package br.pucrs.sma;
 
-import br.pucrs.sma.model.ConfigDto;
-import br.pucrs.sma.model.Event;
-import br.pucrs.sma.model.EventType;
+import br.pucrs.sma.model.*;
 import br.pucrs.sma.queue.Queue;
 import br.pucrs.sma.queue.Scheduler;
 import br.pucrs.sma.util.NumberGenerator;
 import br.pucrs.sma.util.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Simulator {
 
@@ -20,40 +16,27 @@ public class Simulator {
     private Scanner in = new Scanner(System.in);
 
     public Simulator(ConfigDto configDto) throws Exception {
-    	// Pick the scenario
-    	//exerciseOneTest();
-    	//exerciseTwoTest();
-    	//modelTest();
-    	//askUser();
-
-		populateSystem(configDto);
-
+        populateSystem(configDto);
         run();
     }
 
-	private void populateSystem(ConfigDto configDto) throws Exception {
-		NumberGenerator.setMaxRandoms(configDto.getMaxRandoms());
-		NumberGenerator.setX0(configDto.getX0());
-		NumberGenerator.setA(configDto.getA());
-		NumberGenerator.setC(configDto.getC());
-		NumberGenerator.setM(configDto.getM());
+    private void populateSystem(ConfigDto configDto) throws Exception {
+        NumberGenerator.setMaxRandoms(configDto.getMaxRandoms());
+        NumberGenerator.setX0(configDto.getX0());
+        NumberGenerator.setA(configDto.getA());
+        NumberGenerator.setC(configDto.getC());
+        NumberGenerator.setM(configDto.getM());
+        queues = configDto.getQueues();
 
-		queues = configDto.getQueues();
+		Collections.sort(queues, Comparator.comparing(Queue::getId));
 
+		for (EventProbabilityDto event : configDto.getEventProbabilities()) {
+            queues.get(event.getFromQueueId()).addEventProbability(new Event(event.getEventType(),
+                    queues.get(event.getFromQueueId()), queues.get(event.getToQueueId())), event.getProbability());
+        }
+    }
 
-
-		queues.get(0).addEventProbability(new Event(EventType.TRANSITION, queues.get(0), queues.get(1)), 0.8);
-		queues.get(0).addEventProbability(new Event(EventType.TRANSITION, queues.get(0), queues.get(2)), 0.2);
-
-		queues.get(1).addEventProbability(new Event(EventType.TRANSITION, queues.get(1), queues.get(0)), 0.3);
-		queues.get(1).addEventProbability(new Event(EventType.TRANSITION, queues.get(1), queues.get(2)), 0.5);
-		queues.get(1).addEventProbability(new Event(EventType.LEAVE, queues.get(1), null), 0.2);
-
-		queues.get(2).addEventProbability(new Event(EventType.TRANSITION, queues.get(2), queues.get(1)), 0.7);
-		queues.get(2).addEventProbability(new Event(EventType.LEAVE, queues.get(2), null), 0.3);
-	}
-
-	public void run() throws Exception {
+    public void run() throws Exception {
 
         // Schedule all arrival times for each queue
         for (Queue queue : queues) {
@@ -78,44 +61,44 @@ public class Simulator {
                 default:
                     throw new Exception("Invalid EventType detected!");
             }
-        }        
+        }
 
         System.out.println("\nScheduler History:");
         scheduler.printScheduler();
         System.out.println();
-        
-        System.out.println("Total execution time: " + Utils.convertToFourScale(globalTime));     
+
+        System.out.println("Total execution time: " + Utils.convertToFourScale(globalTime));
         System.out.println();
-        
+
         System.out.println("QUEUE STATES:");
-        printQueueStates(event);     
+        printQueueStates(event);
     }
-	
+
     public void updateTime(double eventTime) {
-    	for(Queue q : queues) {
-    		try {
-				q.getQueueStates()[q.getQueueSize()] += eventTime - globalTime;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    	}
+        for (Queue q : queues) {
+            try {
+                q.getQueueStates()[q.getQueueSize()] += eventTime - globalTime;
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
         globalTime = eventTime;
     }
-    
+
     public double getGlobalTime() {
-    	return globalTime;
+        return globalTime;
     }
-    
-    public void printQueueStates(Event event) {    				
-    	for(Queue q : queues) {
-    		System.out.println("\nResults for Queue " + q.getId()+ " (" + q.getA() + '|' + q.getB() + "|" + q.getC() + "|" + q.getK() + ") " +
-					"[Arrival u.t: "+ q.getMinArrivalUnitTime() + "..." + q.getMaxArrivalUnitTime() + " - Leave u.t: " + q.getMinLeaveUnitTime() + "..." + q.getMaxLeaveUnitTime() + "]");
-    		q.printStates();
-    		System.out.println("Losses: " + q.getLosses());      		
-    	}
+
+    public void printQueueStates(Event event) {
+        for (Queue q : queues) {
+            System.out.println("\nResults for Queue " + q.getId() + " (" + q.getA() + '|' + q.getB() + "|" + q.getC() + "|" + q.getK() + ") " +
+                    "[Arrival u.t: " + q.getMinArrivalUnitTime() + "..." + q.getMaxArrivalUnitTime() + " - Leave u.t: " + q.getMinLeaveUnitTime() + "..." + q.getMaxLeaveUnitTime() + "]");
+            q.printStates();
+            System.out.println("Losses: " + q.getLosses());
+        }
     }
-      
+
 //    private void modelTest() throws Exception {
 //    	NumberGenerator.maxRandoms = 100000;
 //    	double[] randomNumbersTest = {0.3281, 0.1133, 0.3332, 0.5634, 0.1099, 0.1221, 0.7271, 0.0301, 0.8291, 0.3131, 0.5232, 0.7291, 0.9129, 0.8723, 0.4101, 0.2209};
@@ -164,72 +147,72 @@ public class Simulator {
 //    }
 
     private void exerciseTwoTest() throws Exception {
-    	NumberGenerator.testMode = true;
-    	double[] randomNumbersTest = {0.3281, 0.1133, 0.3332, 0.5634, 0.1099, 0.1221, 0.7271, 0.0301, 0.8291, 0.3131, 0.5232, 0.7291, 0.9129, 0.8723, 0.4101, 0.2209};
-    	NumberGenerator.getInstance().setRandomNumbersTest(randomNumbersTest);
-    	
-    	Queue one = new Queue(scheduler, this);
-    	one.setId(0);
-    	one.setC(2);
-    	one.setK(3);
-    	one.setMinArrivalUnitTime(1);
-    	one.setMaxArrivalUnitTime(2);
-    	one.setMinLeaveUnitTime(2);
-    	one.setMaxLeaveUnitTime(3);
-    	one.setArrivalTime(2.0);
-    	
-    	Queue two = new Queue(scheduler, this);
-    	two.setId(1);
-    	two.setC(3);
-    	two.setK(5);
-    	two.setMinArrivalUnitTime(1);
-    	two.setMaxArrivalUnitTime(2);
-    	two.setMinLeaveUnitTime(4);
-    	two.setMaxLeaveUnitTime(5);
-    	two.setArrivalTime(1.0);
-    	
-    	queues.add(one);
-    	queues.add(two);
-    	
-    	queues.get(0).addEventProbability(new Event(EventType.TRANSITION, queues.get(0), queues.get(1)), 1);
-    	
-    	queues.get(1).addEventProbability(new Event(EventType.LEAVE, queues.get(1), null), 0.6);    	
-    	queues.get(1).addEventProbability(new Event(EventType.TRANSITION, queues.get(1), queues.get(0)), 0.4);    	    	
+        NumberGenerator.testMode = true;
+        double[] randomNumbersTest = {0.3281, 0.1133, 0.3332, 0.5634, 0.1099, 0.1221, 0.7271, 0.0301, 0.8291, 0.3131, 0.5232, 0.7291, 0.9129, 0.8723, 0.4101, 0.2209};
+        NumberGenerator.getInstance().setRandomNumbersTest(randomNumbersTest);
+
+        Queue one = new Queue(scheduler, this);
+        one.setId(0);
+        one.setC(2);
+        one.setK(3);
+        one.setMinArrivalUnitTime(1);
+        one.setMaxArrivalUnitTime(2);
+        one.setMinLeaveUnitTime(2);
+        one.setMaxLeaveUnitTime(3);
+        one.setArrivalTime(2.0);
+
+        Queue two = new Queue(scheduler, this);
+        two.setId(1);
+        two.setC(3);
+        two.setK(5);
+        two.setMinArrivalUnitTime(1);
+        two.setMaxArrivalUnitTime(2);
+        two.setMinLeaveUnitTime(4);
+        two.setMaxLeaveUnitTime(5);
+        two.setArrivalTime(1.0);
+
+        queues.add(one);
+        queues.add(two);
+
+        queues.get(0).addEventProbability(new Event(EventType.TRANSITION, queues.get(0), queues.get(1)), 1);
+
+        queues.get(1).addEventProbability(new Event(EventType.LEAVE, queues.get(1), null), 0.6);
+        queues.get(1).addEventProbability(new Event(EventType.TRANSITION, queues.get(1), queues.get(0)), 0.4);
     }
-    
+
     private void exerciseOneTest() throws Exception {
-    	NumberGenerator.testMode = true;
-    	double[] randomNumbersTest = {0.2176, 0.0103, 0.1109, 0.3456, 0.9910, 0.2323, 0.9211, 0.0322, 0.1211, 0.5131, 0.7208, 0.9172, 0.9922, 0.8324, 0.5011, 0.2931};
-    	NumberGenerator.getInstance().setRandomNumbersTest(randomNumbersTest);
-    	
-    	Queue one = new Queue(scheduler, this);
-    	one.setId(0);
-    	one.setC(2);
-    	one.setK(4);
-    	one.setMinArrivalUnitTime(2);
-    	one.setMaxArrivalUnitTime(3);
-    	one.setMinLeaveUnitTime(4);
-    	one.setMaxLeaveUnitTime(7);
-    	one.setArrivalTime(3.0);
-    	
-    	Queue two = new Queue(scheduler, this);
-    	two.setId(1);
-    	two.setC(1);
-    	two.setK(999);
-    	two.setMinLeaveUnitTime(4);
-    	two.setMaxLeaveUnitTime(8);
-    	two.setArrivalTime(0);
-    	
-    	queues.add(one);
-    	queues.add(two);
-    	
-    	queues.get(0).addEventProbability(new Event(EventType.TRANSITION, queues.get(0), queues.get(1)), 0.7);
-    	queues.get(0).addEventProbability(new Event(EventType.LEAVE, queues.get(0), null), 0.3);
-    	
-    	queues.get(1).addEventProbability(new Event(EventType.LEAVE, queues.get(1), null), 1);
-		
-	}
-   
+        NumberGenerator.testMode = true;
+        double[] randomNumbersTest = {0.2176, 0.0103, 0.1109, 0.3456, 0.9910, 0.2323, 0.9211, 0.0322, 0.1211, 0.5131, 0.7208, 0.9172, 0.9922, 0.8324, 0.5011, 0.2931};
+        NumberGenerator.getInstance().setRandomNumbersTest(randomNumbersTest);
+
+        Queue one = new Queue(scheduler, this);
+        one.setId(0);
+        one.setC(2);
+        one.setK(4);
+        one.setMinArrivalUnitTime(2);
+        one.setMaxArrivalUnitTime(3);
+        one.setMinLeaveUnitTime(4);
+        one.setMaxLeaveUnitTime(7);
+        one.setArrivalTime(3.0);
+
+        Queue two = new Queue(scheduler, this);
+        two.setId(1);
+        two.setC(1);
+        two.setK(999);
+        two.setMinLeaveUnitTime(4);
+        two.setMaxLeaveUnitTime(8);
+        two.setArrivalTime(0);
+
+        queues.add(one);
+        queues.add(two);
+
+        queues.get(0).addEventProbability(new Event(EventType.TRANSITION, queues.get(0), queues.get(1)), 0.7);
+        queues.get(0).addEventProbability(new Event(EventType.LEAVE, queues.get(0), null), 0.3);
+
+        queues.get(1).addEventProbability(new Event(EventType.LEAVE, queues.get(1), null), 1);
+
+    }
+
 //    public void askUser() throws Exception {
 //      System.out.println("Defina o valor da semente XO para o gerador de numeros aleatorios:");
 //      NumberGenerator.X0 = in.nextLong();
@@ -268,6 +251,7 @@ public class Simulator {
 //          }
 //      }
 //    }
+
     /**
      * This method asks for the user to register the parameters of an specific queue from the array
      */

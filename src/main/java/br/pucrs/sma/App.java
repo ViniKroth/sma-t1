@@ -15,13 +15,7 @@ public class App {
         System.out.println("Alunos: Israel Deorce - Larissa Martins - Vinicius Kroth");
 
         ConfigDto config = new Gson().fromJson(readConfigFile("config.json"), ConfigDto.class);
-        Simulator simulator = new Simulator();
-        // testRandomNumberGenerator();
-    }
-
-    public static void testRandomNumberGenerator() {
-        for (int i = 0; i < NumberGenerator.maxRandoms; i++)
-            System.out.println(NumberGenerator.getInstance().nextRandom());
+        Simulator simulator = new Simulator(config);
     }
 
     public static String readConfigFile(String path) throws IOException {
