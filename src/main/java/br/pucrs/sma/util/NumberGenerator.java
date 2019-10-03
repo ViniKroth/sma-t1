@@ -5,13 +5,11 @@ package br.pucrs.sma.util;
  */
 public class NumberGenerator {
 
-    private static long a = 1140671485;
-    private static long c = 12820163;
-    private static long M = 16777218;
-    private static long X0 = 1;
+    private static long a;
+    private static long c;
+    private static long M;
+    private static long X0;
     private static long Xi = X0;
-
-    //public static int maxRandoms = Integer.MAX_VALUE;
 
     private static NumberGenerator instance;
 
@@ -34,17 +32,17 @@ public class NumberGenerator {
         }
         return instance;
     }
-    
+
     public synchronized double nextRandom() {
-    	if(testMode)
-    		return nextRandomTest();
-    	return nextRandomTrue();
+        if (testMode)
+            return nextRandomTest();
+        return nextRandomTrue();
     }
-    
+
     public synchronized double nextRandomTest() {
-    	maxRandoms--;
-    	return randomNumbersTest[indexArray++];
-    }    
+        maxRandoms--;
+        return randomNumbersTest[indexArray++];
+    }
 
     public synchronized double nextRandomTrue() {
         maxRandoms--;
@@ -56,9 +54,9 @@ public class NumberGenerator {
     public synchronized boolean isFinished() {
         return maxRandoms <= 0;
     }
-    
+
     public synchronized void setRandomNumbersTest(double[] randomNumbersTest) {
-    	this.randomNumbersTest = randomNumbersTest;
+        this.randomNumbersTest = randomNumbersTest;
     }
 
     public static long getA() {
