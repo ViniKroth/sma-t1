@@ -86,7 +86,7 @@ public class Queue {
 		}));
 	}
 
-	private Event routing() {
+	private Event routing(List<EventProbability> eventProbabilityList) {
 		double rnd = NumberGenerator.getInstance().nextRandom();
 		double sumProbabilities = 0.0;
 		for (EventProbability event : eventProbabilityList) {
@@ -105,7 +105,7 @@ public class Queue {
 		if (queueSize < K) {
 			queueSize++;
 			if (queueSize <= C) {
-				Event chosenEvent = routing();
+				Event chosenEvent = routing(eventProbabilityList);
 				scheduler.schedule(chosenEvent.getEventType(), chosenEvent.getFromQueue(), chosenEvent.getToQueue());
 			}
 		} else
@@ -138,15 +138,16 @@ public class Queue {
 
 		queueSize--;
 		if (queueSize >= C) {
-			Event chosenEvent = routing();
-			// System.out.println(chosenEvent);
+			Event chosenEvent = routing(eventProbabilityList);
 			scheduler.schedule(chosenEvent.getEventType(), chosenEvent.getFromQueue(), chosenEvent.getToQueue());
 		}
 
 		if (toQueue.getQueueSize() < toQueue.getK()) {
 			toQueue.setQueueSize(toQueue.getQueueSize() + 1);
-			if (toQueue.getQueueSize() <= toQueue.getC())
-				scheduler.schedule(EventType.LEAVE, toQueue, null);
+			if (toQueue.getQueueSize() <= toQueue.getC()) {
+				Event chosenEvent = routing(toQueue.getEventProbabilityList());
+				scheduler.schedule(chosenEvent.getEventType(), chosenEvent.getFromQueue(), chosenEvent.getToQueue());
+			}
 		} else {
 			toQueue.setLosses(toQueue.getLosses() + 1);
 		}

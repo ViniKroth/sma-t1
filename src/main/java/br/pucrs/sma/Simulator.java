@@ -5,10 +5,8 @@ import br.pucrs.sma.model.EventType;
 import br.pucrs.sma.queue.Queue;
 import br.pucrs.sma.queue.Scheduler;
 import br.pucrs.sma.util.NumberGenerator;
-import br.pucrs.sma.util.Utils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -94,7 +92,7 @@ public class Simulator {
     		
     	}          
     }
-    
+      
     private void modelTest() throws Exception {
     	NumberGenerator.maxRandoms = 100000;
     	double[] randomNumbersTest = {0.3281, 0.1133, 0.3332, 0.5634, 0.1099, 0.1221, 0.7271, 0.0301, 0.8291, 0.3131, 0.5232, 0.7291, 0.9129, 0.8723, 0.4101, 0.2209};
@@ -108,7 +106,7 @@ public class Simulator {
     	one.setMinArrivalUnitTime(1);
     	one.setMaxArrivalUnitTime(4);
     	one.setMinLeaveUnitTime(1);
-    	one.setMaxLeaveUnitTime(5);
+    	one.setMaxLeaveUnitTime(1.5);
     	one.setArrivalTime(1.0);
     	
     	Queue two = new Queue(scheduler, this);
