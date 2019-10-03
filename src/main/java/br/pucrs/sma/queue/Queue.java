@@ -284,8 +284,8 @@ public class Queue {
 		for (int i = 0; i < queueStates.length; i++) {
 			if (queueStates[i] == 0)
 				return;
-			System.out.println("State " + i + " - Timer: " + queueStates[i] + " Percentage: "
-					+ Utils.convertToFourScale(queueStates[i] / simulator.getGlobalTime()));
+			System.out.println("State " + i + " - Timer: " + Utils.convertToFourScale(queueStates[i]) + " Percentage: "
+					+ Utils.convertToTwoScale((queueStates[i] / simulator.getGlobalTime()) * 100) + "%");
 		}
 	}
 

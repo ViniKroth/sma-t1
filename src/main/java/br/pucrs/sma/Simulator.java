@@ -5,6 +5,7 @@ import br.pucrs.sma.model.EventType;
 import br.pucrs.sma.queue.Queue;
 import br.pucrs.sma.queue.Scheduler;
 import br.pucrs.sma.util.NumberGenerator;
+import br.pucrs.sma.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +17,6 @@ public class Simulator {
     private Scheduler scheduler = new Scheduler(this);
     private double globalTime = 0;
     private Scanner in = new Scanner(System.in);
-    private int count = 0;
-
 
     public Simulator() throws Exception {
     	// Pick the scenario
@@ -60,13 +59,15 @@ public class Simulator {
         scheduler.printScheduler();
         System.out.println();
         
+        System.out.println("Total execution time: " + Utils.convertToFourScale(globalTime));     
+        System.out.println();
+        
         System.out.println("QUEUE STATES:");
-        printPercentages(event);
+        printQueueStates(event);     
     }
 	
     public void updateTime(double eventTime) {
     	for(Queue q : queues) {
-    		//System.out.println(count++);
     		try {
 				q.getQueueStates()[q.getQueueSize()] += eventTime - globalTime;
 			} catch (Exception e) {
@@ -81,16 +82,13 @@ public class Simulator {
     	return globalTime;
     }
     
-    public void printPercentages(Event event) {
-    	System.out.println("Last Event: " + event.getEventType());
-    	System.out.println("Global Time: " + globalTime);
-    	
+    public void printQueueStates(Event event) {    				
     	for(Queue q : queues) {
-    		System.out.println("\nResults for Queue " + q.getId()+ " (" + q.getA() + '|' + q.getB() + "|" + q.getC() + "|" + q.getK() + ") : ");
+    		System.out.println("\nResults for Queue " + q.getId()+ " (" + q.getA() + '|' + q.getB() + "|" + q.getC() + "|" + q.getK() + ") " +
+					"[Arrival u.t: "+ q.getMinArrivalUnitTime() + "..." + q.getMaxArrivalUnitTime() + " - Leave u.t: " + q.getMinLeaveUnitTime() + "..." + q.getMaxLeaveUnitTime() + "]");
     		q.printStates();
-    		System.out.println("Losses: " + q.getLosses());
-    		
-    	}          
+    		System.out.println("Losses: " + q.getLosses());      		
+    	}
     }
       
     private void modelTest() throws Exception {

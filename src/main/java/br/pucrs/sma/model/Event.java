@@ -1,6 +1,7 @@
 package br.pucrs.sma.model;
 
 import br.pucrs.sma.queue.Queue;
+import br.pucrs.sma.util.Utils;
 
 public class Event {
 
@@ -62,21 +63,21 @@ public class Event {
                     "eventType=" + eventType +
                     ", fromQueue=" + fromQueue.getId() +
                     ", toQueue=" + toQueue.getId() +
-                    ", executionTime=" + executionTime +
+                    ", executionTime=" + Utils.convertToFourScale(executionTime) +
                     '}';
         } else if(fromQueue != null) {
             str =  "Event{" +
                     "eventType=" + eventType +
                     ", fromQueue=" + fromQueue.getId() +
                     ", toQueue=" + "null" +
-                    ", executionTime=" + executionTime +
+                    ", executionTime=" + Utils.convertToFourScale(executionTime) +
                     '}';
         } else {
             str =  "Event{" +
                     "eventType=" + eventType +
                     ", fromQueue=" + "null" +
                     ", toQueue=" + toQueue.getId() +
-                    ", executionTime=" + executionTime +
+                    ", executionTime=" + Utils.convertToFourScale(executionTime) +
                     '}';
         }
         return str;
