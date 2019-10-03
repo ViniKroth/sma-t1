@@ -87,6 +87,8 @@ public class Queue {
 	}
 
 	private Event routing(List<EventProbability> eventProbabilityList) {
+		if (eventProbabilityList.size() == 1)
+			return eventProbabilityList.get(0).getEvent();
 		double rnd = NumberGenerator.getInstance().nextRandom();
 		double sumProbabilities = 0.0;
 		for (EventProbability event : eventProbabilityList) {
