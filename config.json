@@ -1,0 +1,36 @@
+{
+  "maxRandoms": 0,
+  "a": 1140671485,
+  "c":  12820163,
+  "M": 16777218,
+  "x0": 1,
+  "queues": [
+    {
+      "id": 0,
+      "minArrivalUnitTime": 0.0,
+      "maxArrivalUnitTime": 0.0,
+      "minLeaveUnitTime": 0.0,
+      "maxLeaveUnitTime": 0.0,
+      "C": 0,
+      "K": 0
+    },
+    {
+      "id": 1,
+      "minArrivalUnitTime": 0.0,
+      "maxArrivalUnitTime": 0.0,
+      "minLeaveUnitTime": 0.0,
+      "maxLeaveUnitTime": 0.0,
+      "C": 0,
+      "K": 0
+    },
+    {
+      "id": 2,
+      "minArrivalUnitTime": 0.0,
+      "maxArrivalUnitTime": 0.0,
+      "minLeaveUnitTime": 0.0,
+      "maxLeaveUnitTime": 0.0,
+      "C": 0,
+      "K": 0
+    }
+  ]
+}
