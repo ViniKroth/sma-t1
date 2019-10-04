@@ -7,30 +7,31 @@
   "queues": [
     {
       "id": 0,
-      "minArrivalUnitTime": 0.0,
-      "maxArrivalUnitTime": 0.0,
-      "minLeaveUnitTime": 0.0,
-      "maxLeaveUnitTime": 0.0,
-      "C": 0,
-      "K": 0
+      "minArrivalUnitTime": 2.0,
+      "maxArrivalUnitTime": 3.0,
+      "minLeaveUnitTime": 2.0,
+      "maxLeaveUnitTime": 4.0,
+      "C": 2,
+      "K": 3,
+      "arrivalTime": 1.0
     },
     {
       "id": 1,
-      "minArrivalUnitTime": 0.0,
-      "maxArrivalUnitTime": 0.0,
-      "minLeaveUnitTime": 0.0,
-      "maxLeaveUnitTime": 0.0,
-      "C": 0,
-      "K": 0
+      "minArrivalUnitTime": 1.0,
+      "maxArrivalUnitTime": 4.0,
+      "minLeaveUnitTime": 2.0,
+      "maxLeaveUnitTime": 6.0,
+      "C": 1,
+      "K": 10,
+      "arrivalTime": 3.2
     },
     {
       "id": 2,
-      "minArrivalUnitTime": 0.0,
-      "maxArrivalUnitTime": 0.0,
-      "minLeaveUnitTime": 0.0,
-      "maxLeaveUnitTime": 0.0,
-      "C": 0,
-      "K": 0
+      "minLeaveUnitTime": 3.0,
+      "maxLeaveUnitTime": 5.0,
+      "C": 2,
+      "K": 5,
+      "arrivalTime": 0
     }
   ],
   "eventProbabilities": [
@@ -38,18 +39,40 @@
       "eventType": "TRANSITION",
       "fromQueueId": 0,
       "toQueueId": 1,
-      "probability": 0.8
-    },
-    {
-      "eventType": "LEAVE",
-      "fromQueueId": 1,
-      "probability": 0.8
+      "probability": 0.7
     },
     {
       "eventType": "TRANSITION",
       "fromQueueId": 0,
       "toQueueId": 2,
       "probability": 0.2
+    },
+    {
+      "eventType": "LEAVE",
+      "fromQueueId": 0,
+      "probability": 0.1
+    },
+    {
+      "eventType": "TRANSITION",
+      "fromQueueId": 1,
+      "toQueueId": 0,
+      "probability": 0.3
+    },
+    {
+      "eventType": "LEAVE",
+      "fromQueueId": 1,
+      "probability": 0.7
+    },
+    {
+      "eventType": "TRANSITION",
+      "fromQueueId": 2,
+      "toQueueId": 1,
+      "probability": 0.6
+    },
+    {
+      "eventType": "LEAVE",
+      "fromQueueId": 2,
+      "probability": 0.4
     }
   ]
 }
