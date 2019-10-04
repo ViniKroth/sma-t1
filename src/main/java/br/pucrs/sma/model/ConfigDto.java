@@ -6,7 +6,7 @@ import java.util.List;
 
 public class ConfigDto {
     private Integer maxRandoms;
-    private List<Queue> queues;
+    private List<QueueDto> queues;
     private Long a;
     private Long c;
     private Long M;
@@ -21,11 +21,11 @@ public class ConfigDto {
         this.maxRandoms = maxRandoms;
     }
 
-    public List<Queue> getQueues() {
+    public List<QueueDto> getQueues() {
         return queues;
     }
 
-    public void setQueues(List<Queue> queues) {
+    public void setQueues(List<QueueDto> queues) {
         this.queues = queues;
     }
 

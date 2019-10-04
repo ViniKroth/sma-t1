@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Simulator {
 
-    private List<Queue> queues = new ArrayList<>();
+    private List<Queue> queues;
     private Scheduler scheduler = new Scheduler(this);
     private double globalTime = 0;
     private Scanner in = new Scanner(System.in);
@@ -26,7 +26,11 @@ public class Simulator {
         NumberGenerator.setA(configDto.getA());
         NumberGenerator.setC(configDto.getC());
         NumberGenerator.setM(configDto.getM());
-        queues = configDto.getQueues();
+        queues = new ArrayList<>();
+        for (QueueDto queueDto : configDto.getQueues()) {
+            queues.add(new Queue(scheduler, this, queueDto.getMinArrivalUnitTime(), queueDto.getMaxArrivalUnitTime(),
+                    queueDto.getMinLeaveUnitTime(), queueDto.getMaxLeaveUnitTime(), queueDto.getC(), queueDto.getK(), queueDto.getArrivalTime()));
+        }
 
         Collections.sort(queues, Comparator.comparing(Queue::getId));
 

@@ -40,23 +40,17 @@ public class Queue {
     private Scheduler scheduler;
     private Simulator simulator;
 
-    public Queue(Scheduler scheduler, Simulator simulator) {
+    public Queue(Scheduler scheduler, Simulator simulator, double minArrivalUnitTime, double maxArrivalUnitTime,
+                 double minLeaveUnitTime, double maxLeaveUnitTime, int C, int K, double arrivalTime) {
+        this.minArrivalUnitTime = minArrivalUnitTime;
+        this.maxArrivalUnitTime = maxArrivalUnitTime;
+        this.minLeaveUnitTime = minLeaveUnitTime;
+        this.maxLeaveUnitTime = maxLeaveUnitTime;
+        this.C = C;
+        setK(K);
+        this.arrivalTime = arrivalTime;
         this.scheduler = scheduler;
         this.simulator = simulator;
-    }
-
-    // The Constructor will create the basic table for the queue with the following
-    // columns filled:
-    // queueSize | globalTime | States 0...n |
-    public Queue(int c, int k, Scheduler scheduler, Simulator simulator) {
-        this.C = c;
-        this.K = k;
-        this.scheduler = scheduler;
-        this.simulator = simulator;
-        this.queueStates = new double[K + 1];
-        for (int i = 0; i < queueStates.length; i++) {
-            queueStates[i] = 0;
-        }
     }
 
     /*
